@@ -33,15 +33,14 @@ int is_empty(stack *pstack) {
 
 void pop(stack *pstack) {
     if (is_empty(pstack)) {
-        printf("ERROR: pop is not available. stack is empty.");
-        exit(-1);
+        printf("ERROR: pop is not available. stack is empty.\n");
     }
     pstack->top -= 1;
 }
 
 int peek(stack *pstack) {
     if (is_empty(pstack)) {
-        printf("ERROR: peek is not available. stack is empty.");
+        printf("ERROR: peek is not available. stack is empty.\n");
         exit(-1);
     }
     return pstack->arr[pstack->top];
