@@ -4,29 +4,24 @@ import Foundation
 
 func solution(_ genres:[String], _ plays:[Int]) -> [Int] {
 
-    var idsByGenre: [String: [Int]] = [:]
-    (0..<genres.count).forEach { i in
-        var ids = idsByGenre[genres[i]] ?? []
-        ids.append(i)
-        idsByGenre[genres[i]] = ids
+    // (1) make dictionary of [genre: [(index, play times)]]
+    let dict = genres.enumerated().reduce(into: [String: [(Int, Int)]]()) { result, enumerated in
+        let genre = enumerated.element
+        let index = enumerated.offset
+        result[genre, default: []] += [(index, plays[index])]
     }
     
-    let sortedDict = idsByGenre.sorted {
-        $0.value.compactMap{ plays[$0] }.reduce(0, +) > $1.value.compactMap{ plays[$0] }.reduce(0, +)
+    // (2) sort by sum of play times.
+    let orderedArr = Array(dict).sorted {
+        $0.value.map{ $0.1 }.reduce(0, +) > $1.value.compactMap{ $0.1 }.reduce(0, +)
     }
     
-    var answer: [Int] = []
-    sortedDict.compactMap{ $0.value }.forEach { ids in
-        let first = ids.max { plays[$0] < plays[$1] }!
-        answer += [first]
-        
-        let second = ids.filter { $0 != first }.max { plays[$0] < plays[$1] }
-        if let second = second {
-            answer += [second]
-        }
-    }
+    // (3) map top 2 indexes
+    let result = orderedArr.compactMap {
+        $0.value.sorted { $0.1 > $1.1 }.map{ $0.0 }.prefix(2)
+    }.reduce([], +)
     
-    return answer
+    return result
 }
 
 
